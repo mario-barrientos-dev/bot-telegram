@@ -98,7 +98,7 @@ def input_number(update, context:CallbackContext):
     test = isNumeric(number)
     if number == '/calcular':
             calcular(update, context)
-            return INPUT_NUMBER
+            return ConversationHandler.END
     elif number == '/ready':
             ready_command_handler(update, context)
             return INPUT_NUMBER
