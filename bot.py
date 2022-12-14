@@ -12,7 +12,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger()
 #Solicitar Token
-TOKEN = "5584908607:AAETkZ1Nk0zSxibOQoom2CPkV-YxukVCBZU"
+TOKEN = os.environ['TOKEN']
 
 INPUT_NUMBER = 0
 
