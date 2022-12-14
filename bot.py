@@ -96,17 +96,20 @@ def input_number(update, context:CallbackContext):
     number = update.message.text
     # Verificamos si el ingreso es un número válido y tomamos una decisión
     test = isNumeric(number)
-    if number == '/ready':
+    if number == '/calcular':
+            calcular(update, context)
+            return INPUT_NUMBER
+    elif number == '/ready':
             ready_command_handler(update, context)
             return INPUT_NUMBER
     elif number == '/restart':
             restart(update, context)
             return INPUT_NUMBER
     elif 'number_before' in context.user_data and context.user_data.get('number_before') >= number:
-            update.message.reply_text(f'Debes ingresar un número menor a {number}.\n Puedes reiniciar el juego con el comando /restart')
+            update.message.reply_text(f'Debes ingresar un número menor a {number}.\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins>Puedes reiniciar el juego con el comando /restart')
             return INPUT_NUMBER
     elif 'number_after' in context.user_data and context.user_data.get('number_after') <= number:
-            update.message.reply_text(f'Debes ingresar un número mayor a {number}.\n Puedes reiniciar el juego con el comando /restart')
+            update.message.reply_text(f'Debes ingresar un número mayor a {number}.\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins> Puedes reiniciar el juego con el comando /restart')
             return INPUT_NUMBER
     else:
         # Si los campos son correctos empezamos la validación
