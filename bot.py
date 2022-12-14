@@ -59,7 +59,7 @@ def ready_command_handler_before(update, context:CallbackContext):
         number_after = context.user_data.get('number_after')
     else:
         number_after = '61696'
-    update.message.reply_text('De acuerdo, intentemos con otro número entre ' + number_before + ' y ' + number_after+'\n Puedes reiniciar el juego con el comando /restart')
+    update.message.reply_text('De acuerdo, intentemos con otro número entre ' + number_before + ' y ' + number_after+'\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins>\Puedes reiniciar el bot con el comando /restart', parse_mode=telegram.ParseMode.HTML)
     return INPUT_NUMBER
 
 # Si la respuesta es /si acortamos la muestra desde momento final a momento sugerido por usuario
@@ -72,7 +72,7 @@ def ready_command_handler_after(update, context:CallbackContext):
     else:
         number_before = '0'
 
-    update.message.reply_text('De acuerdo, intentemos con otro número entre ' + number_before + ' y ' + number_after +'\n Puedes reiniciar el juego con el comando /restart')
+    update.message.reply_text('De acuerdo, intentemos con otro número entre ' + number_before + ' y ' + number_after +'\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins>\n Puedes reiniciar el bot con el comando /restart', parse_mode=telegram.ParseMode.HTML)
     return INPUT_NUMBER
 
 # Si la respuesta es /calcular con la muestra reducida un promedio y pintamos el frame resultante 
@@ -96,17 +96,20 @@ def input_number(update, context:CallbackContext):
     number = update.message.text
     # Verificamos si el ingreso es un número válido y tomamos una decisión
     test = isNumeric(number)
-    if number == '/ready':
+    if number == '/calcular':
+            calcular(update, context)
+            return ConversationHandler.END
+    elif number == '/ready':
             ready_command_handler(update, context)
             return INPUT_NUMBER
     elif number == '/restart':
             restart(update, context)
             return INPUT_NUMBER
     elif 'number_before' in context.user_data and context.user_data.get('number_before') >= number:
-            update.message.reply_text(f'Debes ingresar un número menor a {number}.\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins>\nPuedes reiniciar el juego con el comando /restart')
+            update.message.reply_text(f'Debes ingresar un número menor a {number}.\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins>\nPuedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
             return INPUT_NUMBER
     elif 'number_after' in context.user_data and context.user_data.get('number_after') <= number:
-            update.message.reply_text(f'Debes ingresar un número mayor a {number}.\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins> Puedes reiniciar el juego con el comando /restart')
+            update.message.reply_text(f'Debes ingresar un número mayor a {number}.\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins> Puedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
             return INPUT_NUMBER
     else:
         # Si los campos son correctos empezamos la validación
