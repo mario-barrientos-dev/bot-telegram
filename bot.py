@@ -6,22 +6,13 @@ except ImportError:
     from collections import Mapping
 from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHandler, Filters, CallbackContext
 import requests
-from telegram import ChatAction, Bot
+from telegram import ChatAction
 import shutil
 import os
 import logging
 import telegram
-import io
 import os
-from typing import List, NamedTuple, Text
-from urllib.parse import quote, urljoin
-import tempfile
-from httpx import Client
-from PIL import Image
-import click
-import traceback
 from telegram.ext import Updater
-from json import JSONEncoder
 import random
 
 
