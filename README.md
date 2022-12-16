@@ -6,6 +6,7 @@
 4. [FAQs](#faqs)
 ### General Info
 ***
+Bot de Telegram que predice el momento exacto de despegue de un Cohete con la confirmacion (Si/No) del usuario en menos de 16 preguntas y con menos de 200 lineas de código operativo.
 Bot realizado con requests y python-telegram-bot
 ### Screenshot
 ![Image text](https://i.ibb.co/ZNccqW2/imagen-incial.png)
