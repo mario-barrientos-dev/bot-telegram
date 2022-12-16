@@ -14,7 +14,7 @@ import telegram
 import os
 from telegram.ext import Updater
 import random
-
+import math
 
 logging.basicConfig(
     level= logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -48,7 +48,7 @@ def start(update, context:CallbackContext):
 # Si la respuesta es /calcular con la muestra reducida un promedio y pintamos el frame resultante 
 # Actualizamos caché
 def calcular(update, context:CallbackContext):
-    resultado = round((int(context.user_data.get('number_before')) + int(context.user_data.get('number_after')))/2)
+    resultado = str(math.floor((int(number_before)+ int(number_after))/2))
     response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + str(resultado), stream=True)
     with open(str(resultado)+'.png', 'wb') as f:
                     response.raw.decode_content = True
@@ -76,21 +76,21 @@ def input_number(update, context:CallbackContext):
             print(message_count)
             number_before = context.user_data.get('numero')
             context.user_data['number_before'] = number_before
-            random_number_before = str(random.randint(int(number_before), int(number_after)))
-            print(random_number_before + " Esta entre " + number_before + " y " + number_after)
+            bisect_number_before = str(math.floor((int(number_before)+ int(number_after))/2))
+            print(bisect_number_before + " Esta entre " + number_before + " y " + number_after)
             if message_count == 17:
                 calcular(update, context)
                 message_count = 0
                 return ConversationHandler.END
-            context.user_data['numero'] = random_number_before
-            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + random_number_before, stream=True)
+            context.user_data['numero'] = bisect_number_before
+            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + bisect_number_before, stream=True)
             with open('temporal_after.png', 'wb') as f:
                 response.raw.decode_content = True
                 shutil.copyfileobj(response.raw, f)
                 
             chat = update.message.chat
             send_img(f, chat)
-            update.message.reply_text(f'{random_number_before} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>Puedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
+            update.message.reply_text(f'{bisect_number_before} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>Puedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
             
             return ConversationHandler.END    
     
@@ -103,26 +103,26 @@ def input_number(update, context:CallbackContext):
             print(message_count)
             number_after = context.user_data.get('numero')
             context.user_data['number_after'] = number_after
-            random_number_after = str(random.randint(int(number_before), int(number_after)))
-            print(random_number_after + " Esta entre " + number_before + " y " + number_after)
+            bisect_number_after = str(math.floor((int(number_before)+ int(number_after))/2))
+            print(bisect_number_after + " Esta entre " + number_before + " y " + number_after)
             if message_count == 17:
                 calcular(update, context)
                 message_count = 0
                 return ConversationHandler.END
-            context.user_data['numero'] = random_number_after
-            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + random_number_after, stream=True)
+            context.user_data['numero'] = bisect_number_after
+            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + bisect_number_after, stream=True)
             with open('temporal_after.png', 'wb') as f:
                 response.raw.decode_content = True
                 shutil.copyfileobj(response.raw, f)
                 
             chat = update.message.chat
             send_img(f, chat)
-            update.message.reply_text(f'{random_number_after} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>Puedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
+            update.message.reply_text(f'{bisect_number_after} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>Puedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
             
             return ConversationHandler.END
     
     if number == '/ready':
-            random_number = str(random.randint(0, 61696))
+            random_number = str(int((0 + 61696)/2 -1))
             print(message_count)
             if message_count == 17:
                 calcular(update, context)
