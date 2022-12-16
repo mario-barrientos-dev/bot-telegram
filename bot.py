@@ -97,7 +97,7 @@ def input_number(update, context:CallbackContext):
             context.user_data['number_after'] = number_after
             bisect_number_after = str(math.floor((int(number_before)+ int(number_after))/2))
             print(bisect_number_after + " Esta entre " + number_before + " y " + number_after)
-            if message_count == 16:
+            if message_count == 17:
                 resultado = str(math.floor((int(number_before)+ int(number_after))/2))
                 response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + str(resultado), stream=True)
                 with open(str(resultado)+'.png', 'wb') as f:
@@ -125,7 +125,7 @@ def input_number(update, context:CallbackContext):
     if number == '/ready':
             bisect_number = str(int((0 + 61696)/2 -1))
             print(message_count)
-            if message_count == 16:
+            if message_count == 17:
                 resultado = str(math.floor((int(number_before)+ int(number_after))/2))
                 response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + str(resultado), stream=True)
                 with open(str(resultado)+'.png', 'wb') as f:
@@ -153,7 +153,7 @@ def input_number(update, context:CallbackContext):
             clear_cahe(context)
             bisect_number = str(random.randint(0, 61696))
             print(message_count)
-            if message_count == 16:
+            if message_count == 17:
                 resultado = str(math.floor((int(number_before)+ int(number_after))/2))
                 response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + str(resultado), stream=True)
                 with open(str(resultado)+'.png', 'wb') as f:
