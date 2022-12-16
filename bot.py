@@ -105,7 +105,7 @@ def input_number(update, context:CallbackContext):
             context.user_data['number_after'] = number_after
             bisect_number_after = str(math.floor((int(number_before)+ int(number_after))/2))
             print(bisect_number_after + " Esta entre " + number_before + " y " + number_after)
-            if message_count == 17:
+            if message_count == 16:
                 calcular(update, context)
                 message_count = 0
                 return ConversationHandler.END
