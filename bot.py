@@ -122,40 +122,40 @@ def input_number(update, context:CallbackContext):
             return ConversationHandler.END
     
     if number == '/ready':
-            random_number = str(int((0 + 61696)/2 -1))
+            bisect_number = str(int((0 + 61696)/2 -1))
             print(message_count)
             if message_count == 17:
                 calcular(update, context)
                 message_count = 0
                 return ConversationHandler.END
-            context.user_data['numero'] = random_number
-            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + random_number, stream=True)
+            context.user_data['numero'] = bisect_number
+            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + bisect_number, stream=True)
             with open('temporal.png', 'wb') as f:
                 response.raw.decode_content = True
                 shutil.copyfileobj(response.raw, f)
                 
             chat = update.message.chat
             send_img(f, chat)
-            update.message.reply_text(f'{random_number} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>\nPuedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
+            update.message.reply_text(f'{bisect_number} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>\nPuedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
             
             return ConversationHandler.END
     if number == '/restart':
             clear_cahe(context)
-            random_number = str(random.randint(0, 61696))
+            bisect_number = str(random.randint(0, 61696))
             print(message_count)
             if message_count == 17:
                 calcular(update, context)
                 message_count = 0
                 return ConversationHandler.END
-            context.user_data['numero'] = random_number
-            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + random_number, stream=True)
+            context.user_data['numero'] = bisect_number
+            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + bisect_number, stream=True)
             with open('temporal.png', 'wb') as f:
                 response.raw.decode_content = True
                 shutil.copyfileobj(response.raw, f)
                 
             chat = update.message.chat
             send_img(f, chat)
-            update.message.reply_text(f'{random_number} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>\nPuedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
+            update.message.reply_text(f'{bisect_number} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>\nPuedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
             
             return ConversationHandler.END
     else:
