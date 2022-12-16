@@ -1,25 +1,44 @@
+try:
+    # 👇️ using Python 3.10+
+    from collections.abc import Mapping
+except ImportError:
+    # 👇️ using Python 3.10-
+    from collections import Mapping
 from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHandler, Filters, CallbackContext
 import requests
-from telegram import ChatAction
+from telegram import ChatAction, Bot
 import shutil
 import os
 import logging
 import telegram
+import io
+import os
+from typing import List, NamedTuple, Text
+from urllib.parse import quote, urljoin
+import tempfile
+from httpx import Client
+from PIL import Image
+import click
+import traceback
+from telegram.ext import Updater
+from json import JSONEncoder
+import random
 
 
 logging.basicConfig(
     level= logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger()
+logging.basicConfig(level=logging.ERROR)
 #Solicitar Token
-TOKEN = os.environ['TOKEN']
+TOKEN = '5584908607:AAETkZ1Nk0zSxibOQoom2CPkV-YxukVCBZU'
 
 INPUT_NUMBER = 0
 
 number_before = '0'
 number_after = '61696' 
 message_count = 0
-text_init = '_'
+text_init = f'Hola, \n<b>Vamos a calcular en qué momento despega el cohete!!!...</b>\n<ins><b>Fíjate con atención en la siguientes imágenes y dime si en la que eliges el cohete ha despegado o no</b></ins>\n(<i>Un pequeño consejo sería que estés atento al contador de la parte superior derecha de la pantalla (T-): aún no ha despegado, (T+): ya despegó</i>)\nTe preguntaré y contestarás un <b>SI</b> o un <b>NO</b> para ir definiedo el rango donde se encuetra la imagen del despegue, <b>TENGO MÁXIMO 16 INTENTOS PARA LOGRARLO</b>\nSi tienes un muy buen ojo y tu rango se redujo al punto de no poder avanzar, puedes pulsar <b>CALCULAR</b> para que definamos con precisión en que imagen despegó el cohete\n¿Estás listo? /ready para empezar el juego.'
 
 # Inicializamos la conversación y respondemos con un saludo personalizado 
 def start(update, context:CallbackContext):
@@ -94,45 +113,101 @@ def calcular(update, context:CallbackContext):
 # Empezamos la orden 
 def input_number(update, context:CallbackContext):
     number = update.message.text
+    global message_count
+    message_count += 1
     # Verificamos si el ingreso es un número válido y tomamos una decisión
-    test = isNumeric(number)
-    if number == '/calcular':
-            calcular(update, context)
-            return ConversationHandler.END
-    elif number == '/ready':
-            ready_command_handler(update, context)
-            return INPUT_NUMBER
-    elif number == '/restart':
-            restart(update, context)
-            return INPUT_NUMBER
-    elif 'number_before' in context.user_data and context.user_data.get('number_before') >= number:
-            update.message.reply_text(f'Debes ingresar un número menor a {number}.\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins>\nPuedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
-            return INPUT_NUMBER
-    elif 'number_after' in context.user_data and context.user_data.get('number_after') <= number:
-            update.message.reply_text(f'Debes ingresar un número mayor a {number}.\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins> Puedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
-            return INPUT_NUMBER
-    else:
-        # Si los campos son correctos empezamos la validación
-        if test:
-            global message_count
-            message_count += 1
+    if number == '/no':
+            if 'number_after' in context.user_data:
+                number_after = context.user_data.get('number_after')
+            else:
+                number_after = '61696'
+            
             print(message_count)
+            number_before = context.user_data.get('numero')
+            context.user_data['number_before'] = number_before
+            random_number_before = str(random.randint(int(number_before), int(number_after)))
+            print(random_number_before + " Esta entre " + number_before + " y " + number_after)
             if message_count == 17:
                 calcular(update, context)
                 message_count = 0
                 return ConversationHandler.END
-            context.user_data['numero'] = number
-            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + number, stream=True)
-            with open(number+'.png', 'wb') as f:
+            context.user_data['numero'] = random_number_before
+            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + random_number_before, stream=True)
+            with open('temporal_after.png', 'wb') as f:
                 response.raw.decode_content = True
                 shutil.copyfileobj(response.raw, f)
                 
             chat = update.message.chat
             send_img(f, chat)
-            update.message.reply_text('<ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/si, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>,\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins>\n Puedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
+            update.message.reply_text(f'{random_number_before} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>Puedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
+            
+            return ConversationHandler.END    
+    
+    if number == '/yes':
+            if 'number_before' in context.user_data:
+                number_before = context.user_data.get('number_before')
+            else:
+                number_before = '0'
+           
+            print(message_count)
+            number_after = context.user_data.get('numero')
+            context.user_data['number_after'] = number_after
+            random_number_after = str(random.randint(int(number_before), int(number_after)))
+            print(random_number_after + " Esta entre " + number_before + " y " + number_after)
+            if message_count == 17:
+                calcular(update, context)
+                message_count = 0
+                return ConversationHandler.END
+            context.user_data['numero'] = random_number_after
+            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + random_number_after, stream=True)
+            with open('temporal_after.png', 'wb') as f:
+                response.raw.decode_content = True
+                shutil.copyfileobj(response.raw, f)
+                
+            chat = update.message.chat
+            send_img(f, chat)
+            update.message.reply_text(f'{random_number_after} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>Puedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
             
             return ConversationHandler.END
-        else:
+    
+    if number == '/ready':
+            random_number = str(random.randint(0, 61696))
+            print(message_count)
+            if message_count == 17:
+                calcular(update, context)
+                message_count = 0
+                return ConversationHandler.END
+            context.user_data['numero'] = random_number
+            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + random_number, stream=True)
+            with open('temporal.png', 'wb') as f:
+                response.raw.decode_content = True
+                shutil.copyfileobj(response.raw, f)
+                
+            chat = update.message.chat
+            send_img(f, chat)
+            update.message.reply_text(f'{random_number} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>\nPuedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
+            
+            return ConversationHandler.END
+    if number == '/restart':
+            clear_cahe(context)
+            random_number = str(random.randint(0, 61696))
+            print(message_count)
+            if message_count == 17:
+                calcular(update, context)
+                message_count = 0
+                return ConversationHandler.END
+            context.user_data['numero'] = random_number
+            response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + random_number, stream=True)
+            with open('temporal.png', 'wb') as f:
+                response.raw.decode_content = True
+                shutil.copyfileobj(response.raw, f)
+                
+            chat = update.message.chat
+            send_img(f, chat)
+            update.message.reply_text(f'{random_number} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>\nPuedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
+            
+            return ConversationHandler.END
+    else:
             update.message.reply_text('Debes ingresar un número válido.\n Puedes reiniciar el juego con el comando /restart')
 
 # Funciones comunes para las instancias del Bot
@@ -167,11 +242,11 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('start', start))
     
     dp.add_handler(ConversationHandler(
-        entry_points=[CommandHandler('ready', ready_command_handler),
-                    CommandHandler('no', ready_command_handler_before),
-                    CommandHandler('si', ready_command_handler_after),
-                    CommandHandler('restart', restart),
-                    CommandHandler('calcular', calcular),
+        entry_points=[CommandHandler('ready', input_number),
+                    CommandHandler('no', input_number),
+                    CommandHandler('yes', input_number),
+                    CommandHandler('restart', input_number),
+                    
                     ],
         states={
             INPUT_NUMBER: [MessageHandler(Filters.text, input_number)]
