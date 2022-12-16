@@ -31,7 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger()
 logging.basicConfig(level=logging.ERROR)
 #Solicitar Token
-TOKEN = '5584908607:AAETkZ1Nk0zSxibOQoom2CPkV-YxukVCBZU'
+TOKEN = os.environ['TOKEN']
 
 INPUT_NUMBER = 0
 
