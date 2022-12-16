@@ -39,51 +39,11 @@ def start(update, context:CallbackContext):
     context.user_data['number_after'] = '61696'
 
     # Respuesta
-    text_init = f'Hola {name}, \n<b>Vamos a calcular en qué momento despega el cohete!!!...</b>\n<ins><b>Fíjate con atención en la siguientes imágenes y dime si en la que eliges el cohete ha despegado o no</b></ins>\n(<i>Un pequeño consejo sería que estés atento al contador de la parte superior derecha de la pantalla (T-): aún no ha despegado, (T+): ya despegó</i>)\nTe preguntaré y contestarás un <b>SI</b> o un <b>NO</b> para ir definiedo el rango donde se encuetra la imagen del despegue, <b>TENGO MÁXIMO 16 INTENTOS PARA LOGRARLO</b>\nSi tienes un muy buen ojo y tu rango se redujo al punto de no poder avanzar, puedes pulsar <b>CALCULAR</b> para que definamos con precisión en que imagen despegó el cohete\n¿Estás listo? /ready para empezar el juego.'
+    text_init = f'Hola {name}, \n<b>Vamos a calcular en qué momento despega el cohete!!!...</b>\n<ins><b>Fíjate con atención en la siguientes imágenes y dime si en la que eliges el cohete ha despegado o no</b></ins>\n(<i>Un pequeño consejo sería que estés atento al contador de la parte superior derecha de la pantalla (T-): aún no ha despegado, (T+): ya despegó</i>)\nTe preguntaré y contestarás un <b>SI</b> o un <b>NO</b> para ir definiedo el rango donde se encuetra la imagen del despegue, <b>TENGO MÁXIMO 16 INTENTOS PARA LOGRARLO</b>\n¿Estás listo? /ready para empezar el juego.'
     update.message.reply_text(text=text_init , parse_mode=telegram.ParseMode.HTML)
     context.user_data['text_init'] = text_init
     return INPUT_NUMBER
 
-# Reinicio del Bot y Reinicio de caché
-def restart(update, context:CallbackContext):
-    bot = telegram.Bot(token=TOKEN)
-    chat_id = update.effective_user['id']
-    name = update.effective_user['first_name']  
-    clear_cahe(context)
-    bot.send_message(chat_id=chat_id, text=context.user_data['text_init'], parse_mode=telegram.ParseMode.HTML) 
-    return INPUT_NUMBER
-
-# Pregunta Inicial
-def ready_command_handler(update, context:CallbackContext):
-    clear_cahe(context)
-    update.message.reply_text('Tenemos un video fraccionado en <strong>61696 imágenes</strong>, \nDime el número de la imagen que quieres tomar <ins><b>del 0 al 61696</b></ins> para poder calcular en cuál está despegando el cohete', parse_mode=telegram.ParseMode.HTML)
-
-    return INPUT_NUMBER
-
-# Si la respuesta es /no acortamos la muestra desde momento inicial a momento sugerido por usuario
-# Guardamos en memoria el dato recibido
-def ready_command_handler_before(update, context:CallbackContext): 
-    number_before = context.user_data.get('numero')
-    context.user_data['number_before'] = number_before
-    if 'number_after' in context.user_data:
-        number_after = context.user_data.get('number_after')
-    else:
-        number_after = '61696'
-    update.message.reply_text('De acuerdo, intentemos con otro número entre ' + number_before + ' y ' + number_after+'\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins>\Puedes reiniciar el bot con el comando /restart', parse_mode=telegram.ParseMode.HTML)
-    return INPUT_NUMBER
-
-# Si la respuesta es /si acortamos la muestra desde momento final a momento sugerido por usuario
-# Guardamos en memoria el dato recibido
-def ready_command_handler_after(update, context:CallbackContext):
-    number_after = context.user_data.get('numero')
-    context.user_data['number_after'] = number_after
-    if 'number_before' in context.user_data:
-        number_before = context.user_data.get('number_before')
-    else:
-        number_before = '0'
-
-    update.message.reply_text('De acuerdo, intentemos con otro número entre ' + number_before + ' y ' + number_after +'\n/calcular,<ins><b> No tengo más rango para elegir, pero estoy seguro que he capturado la imagen.</b></ins>\n Puedes reiniciar el bot con el comando /restart', parse_mode=telegram.ParseMode.HTML)
-    return INPUT_NUMBER
 
 # Si la respuesta es /calcular con la muestra reducida un promedio y pintamos el frame resultante 
 # Actualizamos caché
