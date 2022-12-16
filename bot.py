@@ -44,23 +44,6 @@ def start(update, context:CallbackContext):
     context.user_data['text_init'] = text_init
     return INPUT_NUMBER
 
-
-# Si la respuesta es /calcular con la muestra reducida un promedio y pintamos el frame resultante 
-# Actualizamos caché
-def calcular(update, context:CallbackContext):
-    resultado = str(math.floor((int(number_before)+ int(number_after))/2))
-    response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + str(resultado), stream=True)
-    with open(str(resultado)+'.png', 'wb') as f:
-                    response.raw.decode_content = True
-                    shutil.copyfileobj(response.raw, f)
-                    
-    chat = update.message.chat
-    send_img(f, chat)
-    update.message.reply_text(f'<b>Lo más probable es que la imagen donde se encuentra despegando el cohete sea la {resultado}</b>\nSi lo deseas, escribe /start para volver a empezar', parse_mode=telegram.ParseMode.HTML)
-    clear_cahe(context)
-    return ConversationHandler.END
-
-
 # Empezamos la orden 
 def input_number(update, context:CallbackContext):
     number = update.message.text
@@ -78,8 +61,17 @@ def input_number(update, context:CallbackContext):
             context.user_data['number_before'] = number_before
             bisect_number_before = str(math.floor((int(number_before)+ int(number_after))/2))
             print(bisect_number_before + " Esta entre " + number_before + " y " + number_after)
-            if message_count == 17:
-                calcular(update, context)
+            if message_count == 16:
+                resultado = str(math.floor((int(number_before)+ int(number_after))/2))
+                response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + str(resultado), stream=True)
+                with open(str(resultado)+'.png', 'wb') as f:
+                                response.raw.decode_content = True
+                                shutil.copyfileobj(response.raw, f)
+                                
+                chat = update.message.chat
+                send_img(f, chat)
+                update.message.reply_text(f'<b>Perfecto el cohete despega en {resultado}</b>\nSi lo deseas, escribe /start para volver a empezar', parse_mode=telegram.ParseMode.HTML)
+                clear_cahe(context)
                 message_count = 0
                 return ConversationHandler.END
             context.user_data['numero'] = bisect_number_before
@@ -106,7 +98,16 @@ def input_number(update, context:CallbackContext):
             bisect_number_after = str(math.floor((int(number_before)+ int(number_after))/2))
             print(bisect_number_after + " Esta entre " + number_before + " y " + number_after)
             if message_count == 16:
-                calcular(update, context)
+                resultado = str(math.floor((int(number_before)+ int(number_after))/2))
+                response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + str(resultado), stream=True)
+                with open(str(resultado)+'.png', 'wb') as f:
+                                response.raw.decode_content = True
+                                shutil.copyfileobj(response.raw, f)
+                                
+                chat = update.message.chat
+                send_img(f, chat)
+                update.message.reply_text(f'<b>Perfecto el cohete despega en {resultado}</b>\nSi lo deseas, escribe /start para volver a empezar', parse_mode=telegram.ParseMode.HTML)
+                clear_cahe(context)
                 message_count = 0
                 return ConversationHandler.END
             context.user_data['numero'] = bisect_number_after
@@ -124,8 +125,17 @@ def input_number(update, context:CallbackContext):
     if number == '/ready':
             bisect_number = str(int((0 + 61696)/2 -1))
             print(message_count)
-            if message_count == 17:
-                calcular(update, context)
+            if message_count == 16:
+                resultado = str(math.floor((int(number_before)+ int(number_after))/2))
+                response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + str(resultado), stream=True)
+                with open(str(resultado)+'.png', 'wb') as f:
+                                response.raw.decode_content = True
+                                shutil.copyfileobj(response.raw, f)
+                                
+                chat = update.message.chat
+                send_img(f, chat)
+                update.message.reply_text(f'<b>Perfecto el cohete despega en {resultado}</b>\nSi lo deseas, escribe /start para volver a empezar', parse_mode=telegram.ParseMode.HTML)
+                clear_cahe(context)
                 message_count = 0
                 return ConversationHandler.END
             context.user_data['numero'] = bisect_number
@@ -143,8 +153,17 @@ def input_number(update, context:CallbackContext):
             clear_cahe(context)
             bisect_number = str(random.randint(0, 61696))
             print(message_count)
-            if message_count == 17:
-                calcular(update, context)
+            if message_count == 16:
+                resultado = str(math.floor((int(number_before)+ int(number_after))/2))
+                response = requests.get('http://framex-dev.wadrid.net/api/video/Falcon%20Heavy%20Test%20Flight%20(Hosted%20Webcast)-wbSwFU6tY1c/frame/' + str(resultado), stream=True)
+                with open(str(resultado)+'.png', 'wb') as f:
+                                response.raw.decode_content = True
+                                shutil.copyfileobj(response.raw, f)
+                                
+                chat = update.message.chat
+                send_img(f, chat)
+                update.message.reply_text(f'<b>Perfecto el cohete despega en {resultado}</b>\nSi lo deseas, escribe /start para volver a empezar', parse_mode=telegram.ParseMode.HTML)
+                clear_cahe(context)
                 message_count = 0
                 return ConversationHandler.END
             context.user_data['numero'] = bisect_number
