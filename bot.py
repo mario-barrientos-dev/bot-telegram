@@ -49,7 +49,7 @@ def input_number(update, context:CallbackContext):
     number = update.message.text
     global message_count
     message_count += 1
-    # Verificamos si el ingreso es un número válido y tomamos una decisión
+    # Verificamos la respuesta del usuario y frente a ella tomamos la decisión de biseccion
     if number == '/no':
             if 'number_after' in context.user_data:
                 number_after = context.user_data.get('number_after')
@@ -121,7 +121,7 @@ def input_number(update, context:CallbackContext):
             update.message.reply_text(f'{bisect_number_after} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>Puedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
             
             return ConversationHandler.END
-    
+    #Si la respuesta es ready tomamos la muestra y la biseccionamos
     if number == '/ready':
             bisect_number = str(int((0 + 61696)/2 -1))
             print(message_count)
@@ -149,6 +149,7 @@ def input_number(update, context:CallbackContext):
             update.message.reply_text(f'{bisect_number} - <ins><b>¿El cohete ya despegó o aún no ha despegado?</b></ins>\n/yes, <b>Ya despegó</b>,\n /no, <b>Aun no ha despegado</b>\nPuedes reiniciar el juego con el comando /restart', parse_mode=telegram.ParseMode.HTML)
             
             return ConversationHandler.END
+    #En caso de reiniciar la aplicacion, se restaura la información del bot
     if number == '/restart':
             clear_cahe(context)
             bisect_number = str(random.randint(0, 61696))
